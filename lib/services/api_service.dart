@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:room_rental/models/enquiry.dart';
 import 'package:room_rental/models/room.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
 class ApiService {
 
   final String baseUrl = "http://192.168.100.69:8000";
+
+
 
   String? accessToken;
   String? refreshToken;
@@ -16,9 +20,7 @@ class ApiService {
       final response = await http.get(
         Uri.parse("$baseUrl/api/room/list/"),
       );
-
      /* print(response.body);*/
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
@@ -102,6 +104,7 @@ class ApiService {
       return false;
     }
   }
+
   Future<Map<String, dynamic>> login(
       String email,
       String password,
@@ -118,12 +121,16 @@ class ApiService {
           "password": password,
         }),
       );
-
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final data = jsonDecode(response.body);
 
         accessToken = data["token"]["access"];
         refreshToken = data["token"]["refresh"];
+
+        final prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString("accessToken", accessToken!);
+        await prefs.setString("refreshToken", refreshToken!);
 
         return {
           "access": accessToken,
@@ -134,6 +141,56 @@ class ApiService {
     } catch (e) {
       print("LOGIN ERROR: $e");
       return {};
+    }
+  }
+
+  Future<void> loadToken () async {
+    final prefs = await SharedPreferences.getInstance();
+    accessToken = prefs.getString("accessToken");
+    refreshToken = prefs.getString("refreshToken");
+  }
+  Future<void> logout () async{
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove("accessToken");
+    await prefs.remove("refreshToken");
+
+    accessToken = null;
+    refreshToken = null;
+
+  }
+
+  Future<List<Enquiry>> getMyEnquiries() async {
+    try {
+
+      await loadToken();
+
+      final response = await http.get(
+        Uri.parse("$baseUrl/api/profile/enquiryList/"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+
+      print("ENQUIRY STATUS: ${response.statusCode}");
+      print("ENQUIRY TOKEN: $accessToken");
+      print("ENQUIRY RESPONSE: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final results = data["results"] as List;
+
+        return results
+            .map((item) => Enquiry.fromJson(item))
+            .toList();
+      }
+
+      return [];
+    } catch (e) {
+      print("GET ENQUIRY ERROR: $e");
+      return [];
     }
   }
 

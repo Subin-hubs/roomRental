@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:room_rental/pages/enquiry/sucess_enquiry.dart';
 import '../../main.dart';
 import '../../models/room.dart';
 import '../../services/api_service.dart';
@@ -213,13 +215,31 @@ class _EnquiryPageState extends State<EnquiryPage> {
               height: 52,
               child: ElevatedButton(
                 onPressed: () async {
+
                   final success = await apiService.sendEnquiry(
                     widget.room.id,
                     messageController.text,
                     nameController.text,
                     phoneController.text,
                   );
+
                   print("Enquiry result: $success");
+
+                  if(mounted){
+                    if(success == true){
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>sucessEnquiry(roomTitle: widget.room.title,)));
+                    }
+                    else{
+                      Fluttertoast.showToast(msg: "Failed to send the Enquiry",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 3,
+                        backgroundColor: const Color(0xFF2D2D2D),
+                        textColor: Colors.white,
+                        fontSize: 14,
+                      );
+                    }
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryGreen,

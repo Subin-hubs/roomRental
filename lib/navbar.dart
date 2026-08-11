@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:room_rental/pages/enquiry/enquiry_page.dart';
+import 'package:room_rental/pages/enquiry/my_enquiries_page.dart';
 import 'package:room_rental/pages/home/home_page.dart';
 import 'package:room_rental/pages/profile/profile_page.dart';
 import 'package:room_rental/pages/search/search_page.dart';
@@ -38,7 +39,7 @@ class _NavbarState extends State<Navbar> {
 
     Home(),
     SearchPage(),
-    /*EnquiryPage(),*/
+    MyEnquiriesPage(),
     ProfilePage(),
 
   ];
@@ -75,7 +76,7 @@ class _NavbarState extends State<Navbar> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined),label: "Home",),
           BottomNavigationBarItem(icon: Icon(Icons.copy),label: "Template",),
-          /*BottomNavigationBarItem(icon: Icon(Icons.copy_all_outlined),label: "Resume",),*/
+          BottomNavigationBarItem(icon: Icon(Icons.copy_all_outlined),label: "Resume",),
           BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined),label: "Profile",),
         ],
       ),

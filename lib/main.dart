@@ -8,7 +8,11 @@ import 'navbar.dart';
 
 final apiService = ApiService();
 
-void main() {
+void main() async{
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await apiService.loadToken();
+
   runApp(const MyApp());
 }
 
@@ -22,7 +26,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: LoginPage(),
+      home: apiService.accessToken != null?
+          Navbar(0, true):LoginPage(),
     );
   }
 }
