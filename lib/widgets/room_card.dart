@@ -12,22 +12,24 @@ class RoomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        children: [
-          Image.network(room.roomImage[0].url),
-          Text(room.title),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.network(room.roomImage[0].url ),
+            Text(room.title),
 
-          Row(
-            children: [
-              Text(room.location),
-              Text(room.city),
-            ],
-          ),
+            Row(
+              children: [
+                Text(room.location),
+                Text(room.city),
+              ],
+            ),
 
-          Text(room.price),
+            Text(room.price),
 
-          Text(room.isAvailable.toString()),
-        ],
+            Text(room.isAvailable.toString()),
+          ],
+        ),
       ),
     );
   }
