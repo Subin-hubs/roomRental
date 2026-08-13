@@ -32,20 +32,26 @@ class Room {
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
-      createdOn: json["created_on"],
-      id: json["id"],
-      user: json["user"],
-      category: json["category"],
-      title: json["title"],
-      description: json["description"],
-      price: json["price"],
-      city: json["city"],
-      location: json["location"],
-      isAvailable: json["is_available"],
-      amenities: List<String>.from(json["amenities"]),
-      roomImage: (json["images"] as List)
+      createdOn: json["created_on"] ?? "",
+      id: json["id"] ?? "",
+      user: json["user"] ?? "",
+      category: json["category"] ?? "",
+      title: json["title"] ?? "",
+      description: json["description"] ?? "",
+      price: json["price"]?.toString() ?? "",
+      city: json["city"] ?? "",
+      location: json["location"] ?? "",
+      isAvailable: json["is_available"] ?? false,
+
+      amenities: json["amenities"] != null
+          ? List<String>.from(json["amenities"])
+          : [],
+
+      roomImage: json["images"] != null
+          ? (json["images"] as List)
           .map((image) => RoomImage.fromJson(image))
-          .toList(),
+          .toList()
+          : [],
     );
   }
 

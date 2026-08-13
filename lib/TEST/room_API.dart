@@ -1,14 +1,17 @@
-/*
 import 'package:http/http.dart' as http;
+
+import '../main.dart';
 
 
 
 Future<void> main() async {
-  
-  final response = await http.get(Uri.parse("http://127.0.0.1:8000/api/room/list/"),);
 
-  print(response.statusCode);
-  print(response.body);
+
+  final profile = await apiService.getProfile();
+
+  print("NAME: ${profile?.name}");
+  print("EMAIL: ${profile?.email}");
+  print("PHONE: ${profile?.mobileNo}");
+  print("ADDRESS: ${profile?.address}");
 
 }
-*/

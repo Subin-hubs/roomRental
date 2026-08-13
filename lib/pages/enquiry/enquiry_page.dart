@@ -51,6 +51,9 @@ class _EnquiryPageState extends State<EnquiryPage> {
     return buffer.toString();
   }
 
+  bool isSubmitting = false;
+
+
   @override
   Widget build(BuildContext context) {
     final hasImage = widget.room.roomImage.isNotEmpty;
@@ -214,35 +217,54 @@ class _EnquiryPageState extends State<EnquiryPage> {
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: () async {
+                onPressed: isSubmitting
+                    ? null
+                    : () async {
+                  if (messageController.text.trim().isEmpty) {
+                    Fluttertoast.showToast(msg: "Please enter a message");
+                    return;
+                  }
+                  if (nameController.text.trim().isEmpty) {
+                    Fluttertoast.showToast(msg: "Please enter your name");
+                    return;
+                  }
+                  if (phoneController.text.trim().isEmpty) {
+                    Fluttertoast.showToast(msg: "Please enter your phone number");
+                    return;
+                  }
+
+                  setState(() => isSubmitting = true);
 
                   final success = await apiService.sendEnquiry(
                     widget.room.id,
-                    messageController.text,
-                    nameController.text,
-                    phoneController.text,
+                    messageController.text.trim(),
+                    nameController.text.trim(),
+                    phoneController.text.trim(),
                   );
 
-                  print("Enquiry result: $success");
+                  if (!mounted) return;
+                  setState(() => isSubmitting = false);
 
-                  if(mounted){
-                    if(success == true){
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>sucessEnquiry(roomTitle: widget.room.title,)));
-                    }
-                    else{
-                      Fluttertoast.showToast(msg: "Failed to send the Enquiry",
-                        toastLength: Toast.LENGTH_LONG,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 3,
-                        backgroundColor: const Color(0xFF2D2D2D),
-                        textColor: Colors.white,
-                        fontSize: 14,
-                      );
-                    }
+                  if (success == true) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => sucessEnquiry(roomTitle: widget.room.title),
+                      ),
+                    );
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "Failed to send the Enquiry",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: const Color(0xFF2D2D2D),
+                      textColor: Colors.white,
+                      fontSize: 14,
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryGreen,
+                   backgroundColor: primaryGreen,
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
